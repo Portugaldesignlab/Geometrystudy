@@ -1,113 +1,295 @@
-const spaces = [
+const stages = [
   {
-    eyebrow: "Year 1 · Discovery Atrium",
-    title: "Observe the World Through a Product Lens",
+    name: "Discovery Atrium",
+    title: "Observe & Frame",
     description:
-      "You enter a bright atrium where student projects float like constellations. This space invites curiosity and empathy as you identify real people, real needs, and real constraints.",
+      "Map user context, institutional constraints, and systemic pain points before proposing any feature direction.",
     questions: [
-      "Which user group in your campus community feels underserved right now?",
-      "What observations from your studio classes changed how you define a problem?",
-      "How did your first research interview challenge your assumptions?"
+      "What hidden behavior patterns emerge across contexts?",
+      "Which assumptions still lack evidence?",
+      "How does higher-education culture shape user motivation?"
     ]
   },
   {
-    eyebrow: "Year 1 · Methods Lab",
-    title: "Build Your Research Compass",
+    name: "Methods Lab",
+    title: "Evidence Architecture",
     description:
-      "In this laboratory, walls respond to your notes and sketches. Every method you choose—interviews, field studies, diary logs—shapes the quality of your design direction.",
+      "Operationalize research by selecting rigorous methods and linking findings to clear decision criteria.",
     questions: [
-      "Which research method helped you uncover emotional user needs, not just functional ones?",
-      "Where did bias appear in your process, and how can you reduce it next time?",
-      "How will you translate findings into actionable design criteria?"
+      "How will you triangulate qualitative and quantitative evidence?",
+      "What reliability risks appear in your sampling strategy?",
+      "Which insights are strong enough to become design requirements?"
     ]
   },
   {
-    eyebrow: "Year 2 · Prototyping Corridor",
-    title: "Turn Insight Into Tangible Experiences",
+    name: "Prototyping Corridor",
+    title: "Rapid Iteration",
     description:
-      "A corridor of shifting prototypes surrounds you: paper interfaces, physical mockups, and service blueprints. The journey rewards fast iteration and constructive critique.",
+      "Prototype interactions as hypotheses, then stress-test accessibility, clarity, and task completion.",
     questions: [
-      "What did your roughest prototype teach you that polished screens could not?",
-      "How did feedback from peers or tutors alter your interaction flows?",
-      "What evidence shows your design is becoming more inclusive and accessible?"
+      "Which interaction caused the highest cognitive load?",
+      "What invalidated your initial flow logic?",
+      "Which accessibility fixes delivered the highest impact?"
     ]
   },
   {
-    eyebrow: "Year 3 · Systems Dome",
-    title: "Design Within Ecosystems",
+    name: "Systems Dome",
+    title: "Strategic Systems Thinking",
     description:
-      "Inside a vast dome, each design decision ripples across sustainability, ethics, business models, and policy. You learn to balance desirability, feasibility, and viability.",
+      "Evaluate product decisions through ethics, sustainability, service operations, and business feasibility.",
     questions: [
-      "Which stakeholders beyond end users are affected by your concept?",
-      "How does your project reduce harm or increase long-term social value?",
-      "What trade-offs are you willing to make—and which are non-negotiable?"
+      "Which stakeholder gains are offset by operational costs?",
+      "How does your concept behave at institutional scale?",
+      "Where can governance constraints break the experience?"
     ]
   },
   {
-    eyebrow: "Final Year · Launch Deck",
-    title: "Articulate Your Designer Identity",
+    name: "Launch Deck",
+    title: "Identity & Impact",
     description:
-      "You arrive at the launch deck, where your capstone story becomes visible in every direction. This final space asks you to connect your portfolio, values, and professional future.",
+      "Synthesize the full journey into portfolio narrative, measurable outcomes, and professional positioning.",
     questions: [
-      "How has your definition of good product design evolved during your degree?",
-      "Which strengths now define your contribution in multidisciplinary teams?",
-      "What type of impact do you want your first post-graduation role to create?"
+      "Which metric best proves value creation?",
+      "How has your designer identity matured technically?",
+      "What strategic contribution do you bring to multidisciplinary teams?"
     ]
   }
 ];
 
-const template = document.querySelector("#spaceTemplate");
-const spaceContainer = document.querySelector("#spaceContainer");
+const toolkit = [
+  { phase: "Research", title: "Contextual Inquiry Matrix", output: "Behavior map with evidence confidence score" },
+  { phase: "Research", title: "JTBD Tension Model", output: "Outcome-driven opportunity map" },
+  { phase: "Ideation", title: "Morphological Interaction Grid", output: "Option set with constraint analysis" },
+  { phase: "Prototyping", title: "Task-Flow Stress Test", output: "Failure-state inventory" },
+  { phase: "Prototyping", title: "Accessibility Heuristic Pass", output: "WCAG gap report with severity" },
+  { phase: "Strategy", title: "Service Blueprint Layering", output: "Frontstage-backstage dependency model" },
+  { phase: "Strategy", title: "Risk and Ethics Register", output: "Governance and mitigation plan" }
+];
+
+const factors = [
+  { id: "desirability", label: "Desirability", value: 60 },
+  { id: "feasibility", label: "Feasibility", value: 50 },
+  { id: "viability", label: "Viability", value: 55 },
+  { id: "ethics", label: "Ethical Integrity", value: 72 }
+];
+
+const timeline = document.querySelector("#timeline");
+const spaceCard = document.querySelector("#spaceCard");
 const progressLabel = document.querySelector("#progressLabel");
 const progressFill = document.querySelector("#progressFill");
 const prevBtn = document.querySelector("#prevBtn");
 const nextBtn = document.querySelector("#nextBtn");
+const startJourney = document.querySelector("#startJourney");
+const openSimulator = document.querySelector("#openSimulator");
+const sliderGroup = document.querySelector("#sliderGroup");
+const readinessValue = document.querySelector("#readinessValue");
+const readinessLabel = document.querySelector("#readinessLabel");
+const recommendations = document.querySelector("#recommendations");
+const phaseFilters = document.querySelector("#phaseFilters");
+const toolCards = document.querySelector("#toolCards");
+const reflectionForm = document.querySelector("#reflectionForm");
+const reflectionOutput = document.querySelector("#reflectionOutput");
 
-let currentSpaceIndex = 0;
+let stageIndex = 0;
+let activePhase = "All";
 
-function renderSpace(index) {
-  const space = spaces[index];
-  const node = template.content.cloneNode(true);
-
-  node.querySelector(".space-eyebrow").textContent = space.eyebrow;
-  node.querySelector(".space-title").textContent = space.title;
-  node.querySelector(".space-description").textContent = space.description;
-
-  const list = node.querySelector(".question-set ul");
-  list.innerHTML = "";
-  space.questions.forEach((question) => {
-    const li = document.createElement("li");
-    li.textContent = question;
-    list.appendChild(li);
+function renderTimeline() {
+  timeline.innerHTML = "";
+  stages.forEach((stage, index) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = `stage-chip ${index === stageIndex ? "active" : ""}`;
+    chip.textContent = `${index + 1}. ${stage.name}`;
+    chip.addEventListener("click", () => {
+      stageIndex = index;
+      renderStage();
+    });
+    timeline.appendChild(chip);
   });
-
-  spaceContainer.innerHTML = "";
-  spaceContainer.appendChild(node);
-
-  progressLabel.textContent = `Space ${index + 1} of ${spaces.length}`;
-  progressFill.style.width = `${((index + 1) / spaces.length) * 100}%`;
-
-  prevBtn.disabled = index === 0;
-  nextBtn.disabled = index === spaces.length - 1;
 }
 
-prevBtn.addEventListener("click", () => {
-  if (currentSpaceIndex > 0) {
-    currentSpaceIndex -= 1;
-    renderSpace(currentSpaceIndex);
+function renderStage() {
+  const stage = stages[stageIndex];
+  spaceCard.classList.add("entering");
+
+  setTimeout(() => {
+    spaceCard.innerHTML = `
+      <p class="eyebrow">${stage.name}</p>
+      <h3>${stage.title}</h3>
+      <p>${stage.description}</p>
+      <h4>Critical prompts</h4>
+      <ul>${stage.questions.map((q) => `<li>${q}</li>`).join("")}</ul>
+    `;
+    spaceCard.classList.remove("entering");
+  }, 130);
+
+  progressLabel.textContent = `Stage ${stageIndex + 1} / ${stages.length}`;
+  progressFill.style.width = `${((stageIndex + 1) / stages.length) * 100}%`;
+  prevBtn.disabled = stageIndex === 0;
+  nextBtn.disabled = stageIndex === stages.length - 1;
+  renderTimeline();
+}
+
+function setupSimulator() {
+  sliderGroup.innerHTML = "";
+  factors.forEach((factor) => {
+    const card = document.createElement("article");
+    card.className = "slider-card";
+    card.innerHTML = `
+      <label for="${factor.id}">${factor.label}<span id="${factor.id}-value">${factor.value}</span></label>
+      <input id="${factor.id}" type="range" min="0" max="100" value="${factor.value}" />
+    `;
+    card.querySelector("input").addEventListener("input", (e) => {
+      factor.value = Number(e.target.value);
+      card.querySelector("span").textContent = factor.value;
+      evaluateReadiness();
+    });
+    sliderGroup.appendChild(card);
+  });
+  evaluateReadiness();
+}
+
+function evaluateReadiness() {
+  const weighted =
+    factors.find((f) => f.id === "desirability").value * 0.3 +
+    factors.find((f) => f.id === "feasibility").value * 0.25 +
+    factors.find((f) => f.id === "viability").value * 0.25 +
+    factors.find((f) => f.id === "ethics").value * 0.2;
+
+  const score = Math.round(weighted);
+  readinessValue.textContent = score;
+
+  let posture = "Balanced exploration posture.";
+  if (score >= 80) posture = "High readiness: move toward pilot implementation.";
+  else if (score < 50) posture = "Low readiness: reframe assumptions and gather stronger evidence.";
+
+  readinessLabel.textContent = posture;
+
+  recommendations.innerHTML = "";
+  const weakest = [...factors].sort((a, b) => a.value - b.value).slice(0, 2);
+  weakest.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = `Increase ${item.label} via a targeted experiment.`;
+    recommendations.appendChild(li);
+  });
+}
+
+function renderToolkitFilters() {
+  const phases = ["All", ...new Set(toolkit.map((item) => item.phase))];
+  phaseFilters.innerHTML = "";
+
+  phases.forEach((phase) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = `filter-chip ${phase === activePhase ? "active" : ""}`;
+    chip.textContent = phase;
+    chip.addEventListener("click", () => {
+      activePhase = phase;
+      renderToolkitFilters();
+      renderToolkitCards();
+    });
+    phaseFilters.appendChild(chip);
+  });
+}
+
+function renderToolkitCards() {
+  toolCards.innerHTML = "";
+  const visible = activePhase === "All" ? toolkit : toolkit.filter((item) => item.phase === activePhase);
+
+  visible.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "tool-card";
+    card.innerHTML = `
+      <span class="tag">${item.phase}</span>
+      <h3>${item.title}</h3>
+      <p>${item.output}</p>
+    `;
+    toolCards.appendChild(card);
+  });
+}
+
+function setupReflection() {
+  reflectionForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const challenge = document.querySelector("#challengeInput").value.trim();
+    const evidence = document.querySelector("#evidenceInput").value;
+    const action = document.querySelector("#actionInput").value.trim();
+
+    reflectionOutput.hidden = false;
+    reflectionOutput.innerHTML = `
+      <h3>Generated Reflection Memo</h3>
+      <p><strong>Challenge framing:</strong> ${challenge}</p>
+      <p><strong>Evidence anchor:</strong> ${evidence}</p>
+      <p><strong>Next experimental action:</strong> ${action}</p>
+      <p><strong>Academic synthesis:</strong> The proposed action should be evaluated using measurable success criteria and peer critique to maintain methodological rigor.</p>
+    `;
+  });
+}
+
+function setupActions() {
+  prevBtn.addEventListener("click", () => {
+    if (stageIndex > 0) {
+      stageIndex -= 1;
+      renderStage();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (stageIndex < stages.length - 1) {
+      stageIndex += 1;
+      renderStage();
+    }
+  });
+
+  startJourney.addEventListener("click", () => {
+    document.querySelector("#journey").scrollIntoView({ behavior: "smooth" });
+  });
+
+  openSimulator.addEventListener("click", () => {
+    document.querySelector("#simulator").scrollIntoView({ behavior: "smooth" });
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight") nextBtn.click();
+    if (event.key === "ArrowLeft") prevBtn.click();
+  });
+}
+
+function drawGrid() {
+  const canvas = document.querySelector("#bgGrid");
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.scale(dpr, dpr);
+
+  const spacing = 36;
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  ctx.strokeStyle = "rgba(129, 157, 255, 0.14)";
+  ctx.lineWidth = 1;
+
+  for (let x = 0; x <= window.innerWidth; x += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, window.innerHeight);
+    ctx.stroke();
   }
-});
 
-nextBtn.addEventListener("click", () => {
-  if (currentSpaceIndex < spaces.length - 1) {
-    currentSpaceIndex += 1;
-    renderSpace(currentSpaceIndex);
+  for (let y = 0; y <= window.innerHeight; y += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(window.innerWidth, y);
+    ctx.stroke();
   }
-});
+}
 
-window.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowRight") nextBtn.click();
-  if (event.key === "ArrowLeft") prevBtn.click();
-});
+window.addEventListener("resize", drawGrid);
 
-renderSpace(currentSpaceIndex);
+renderTimeline();
+renderStage();
+setupSimulator();
+renderToolkitFilters();
+renderToolkitCards();
+setupReflection();
+setupActions();
+drawGrid();
