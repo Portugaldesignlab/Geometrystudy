@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Design Systems Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="bgGrid" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="brand" href="#hero">PD Systems Studio</a>
+    <nav>
+      <a href="#journey">Journey</a>
+      <a href="#simulator">Simulator</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#reflection">Reflection</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero" class="hero">
+      <p class="eyebrow">Higher Education · Product Design</p>
+      <h1>Immersive Spatial UX Lab for Academic Product Designers</h1>
+      <p class="lede">
+        Explore a serious, systems-oriented journey from design research to launch strategy.
+        Navigate interactive modules, evaluate trade-offs, and produce academically grounded design decisions.
+      </p>
+      <div class="hero-actions">
+        <button id="startJourney" type="button">Start Guided Journey</button>
+        <button id="openSimulator" type="button" class="secondary">Open Design Simulator</button>
+      </div>
+      <div class="hero-stats">
+        <article><h3>12</h3><p>Technical modules</p></article>
+        <article><h3>5</h3><p>Design maturity stages</p></article>
+        <article><h3>28</h3><p>Studio reflection prompts</p></article>
+      </div>
+    </section>
+
+    <section id="journey" class="panel">
+      <div class="panel-head">
+        <h2>Spatial Course Journey</h2>
+        <p>Progress through each environment and review discipline-specific inquiry questions.</p>
+      </div>
+      <div class="timeline" id="timeline"></div>
+      <article id="spaceCard" class="space-card" aria-live="polite"></article>
+      <div class="nav-row">
+        <button id="prevBtn" type="button">◀ Previous</button>
+        <div class="progress" role="status">
+          <span id="progressLabel">Stage 1 / 5</span>
+          <div class="progress-track"><div id="progressFill"></div></div>
+        </div>
+        <button id="nextBtn" type="button">Next ▶</button>
+      </div>
+    </section>
+
+    <section id="simulator" class="panel simulator">
+      <div class="panel-head">
+        <h2>Design Decision Simulator</h2>
+        <p>Model trade-offs across desirability, feasibility, viability, and ethical impact.</p>
+      </div>
+      <div class="sim-grid">
+        <div class="slider-group" id="sliderGroup"></div>
+        <article class="score-card">
+          <h3>System Readiness Index</h3>
+          <p id="readinessValue" class="score">0</p>
+          <p id="readinessLabel">Tune the variables to generate your strategy posture.</p>
+          <ul id="recommendations"></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="toolkit" class="panel">
+      <div class="panel-head">
+        <h2>Technical Toolkit Matrix</h2>
+        <p>Filter methods by phase and inspect practical outputs for studio delivery.</p>
+      </div>
+      <div class="chip-row" id="phaseFilters"></div>
+      <div class="card-grid" id="toolCards"></div>
+    </section>
+
+    <section id="reflection" class="panel">
+      <div class="panel-head">
+        <h2>Reflection Lab</h2>
+        <p>Capture evidence-driven reflections that connect design intent and academic rigor.</p>
+      </div>
+      <form id="reflectionForm" class="reflection-form">
+        <label>Current project challenge
+          <textarea id="challengeInput" required placeholder="Describe the core design challenge..."></textarea>
+        </label>
+        <label>Primary evidence source
+          <select id="evidenceInput" required>
+            <option value="">Select evidence type</option>
+            <option>User interviews</option>
+            <option>Usability tests</option>
+            <option>Analytics telemetry</option>
+            <option>Service blueprint audit</option>
+          </select>
+        </label>
+        <label>Next experimental action
+          <input id="actionInput" required placeholder="Define your next measurable experiment" />
+        </label>
+        <button type="submit">Generate Academic Reflection Note</button>
+      </form>
+      <article id="reflectionOutput" class="reflection-output" hidden></article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Product Design Systems Studio · Academic experimental interface</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
