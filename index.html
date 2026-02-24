@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Design Spatial Journey</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="experience" aria-live="polite">
+    <header class="hud">
+      <h1>Spatial Product Design Journey</h1>
+      <p>Move through each space and reflect on your growth in higher education.</p>
+      <div class="controls">
+        <button id="prevBtn" type="button">◀ Previous Space</button>
+        <button id="nextBtn" type="button">Next Space ▶</button>
+      </div>
+      <div class="progress" role="status">
+        <span id="progressLabel">Space 1 of 5</span>
+        <div class="progress-bar"><div id="progressFill"></div></div>
+      </div>
+    </header>
+
+    <section id="spaceContainer" class="space-container"></section>
+  </main>
+
+  <template id="spaceTemplate">
+    <article class="space-card">
+      <div class="space-glow"></div>
+      <p class="space-eyebrow"></p>
+      <h2 class="space-title"></h2>
+      <p class="space-description"></p>
+      <div class="question-set">
+        <h3>Reflection prompts</h3>
+        <ul></ul>
+      </div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
